@@ -46,7 +46,7 @@ def dropFitDataByAbsVals(row):
         absValFit.append(order)
         fitsByAbsVals.append(absValFit)
 
-    fitDataByAbsVals = pd.DataFrame(fitsByAbsVals, columns=["fit_pp", "fit_mp", "fit_pm", "fit_mm", "order"])
+    fitDataByAbsVals = pd.DataFrame(fitsByAbsVals, columns=["fit(+,+)", "fit(-,+)", "fit(+,-)", "fit(-,-)", "order"])
     fitDataByAbsVals.to_csv("out/fitDataByAbsVals_" + str(row) + ".csv")
 
     
