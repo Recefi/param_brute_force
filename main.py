@@ -37,12 +37,12 @@ def genParam():
     a_j = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
     b_j = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
     d_j = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
-    g_j = mt.uniform(-1, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
+    g_j = mt.uniform(-1, 0) * np.power(10, -mt.integers(0, 6), dtype = float)
 
     a_a = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
     b_a = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
     d_a = mt.uniform(0, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
-    g_a = mt.uniform(-1, 1) * np.power(10, -mt.integers(0, 6), dtype = float)
+    g_a = mt.uniform(-1, 0) * np.power(10, -mt.integers(0, 6), dtype = float)
 
     return s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a
 
@@ -85,8 +85,8 @@ def checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a):
     if (len(optFitness)):
         # из всех заданных в файле оптимальных стратегий рассматриваем только "самую оптимальную" при данных параметрах
         optFit = np.max(optFitness)
-        # либо конкретную
-        # # optFit = optFitness[0]
+        # # либо конкретную
+        # optFit = optFitness[0]
 
         for i in range(len(Fitness)):
             if (Fitness[i] > optFit):
@@ -113,9 +113,10 @@ def checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a):
         errs = -1
 
     print(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, errs, orderErrs)
-    log.append([s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, optFitIndxs, optFitness, optFit, errs, errIndxs, errFits, fitIndxs, Fitness, orderErrs])
+    log.append([s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, optFitIndxs, optFitness, optFit, errs, errIndxs, errFits, fitIndxs, Fitness, orderErrs])  # первый вариант лога, рекомендуется для вручную заданных параметров
+    # log.append([s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, optFitIndxs, optFitness, optFit, errs, errIndxs, errFits, orderErrs])  # второй вариант лога, рекомендуется для генерируемых параметров
 
-
+# вручную заданный лог
 checkParam(1, 1, 0.0016, 0.0000007, 0.000016, 0.00008, 0.006, 0.000000075, 0.00006, 0.004)
 checkParam(1, 1, 0.0016, 0.0000007, 0.000016, -0.00008, 0.006, 0.000000075, 0.00006, -0.004)
 checkParam(0.25, 0.003, 0.0016, 0.0000007, 0.000016, 0.00008, 0.006, 0.000000075, 0.00006, 0.004)
@@ -124,14 +125,17 @@ checkParam(0.25, 0.003, 0.098, 0.0000006, 0.0003, -0.003, 0.616, 0.000035, 0.000
 checkParam(0.25, 0.003, 0.098, 0.0000006, 0.00003, 0.003, 0.012, 0.000035, 0.00003, 0.006)
 checkParam(0.25, 0.003, 0.0245, 0.0000006, 0.00003, 0.003, 0.012, 0.000035, 0.00003, 0.006)
 
+# # генерация лога случайных параметров
 # i = 0
 # for i in range(100000):
 #     s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a = genParam()
 #     checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a)
 
 logData = pd.DataFrame(log, columns=["s1", "s2", "a_j", "b_j", "d_j", "g_j", "a_a", "b_a", "d_a", "g_a", "optFitIndxs", "optFitness", "optFit", "errs", "errIndxs", "errFits", "allFitIndxs", "allFitness", "orderErrs"])
+#logData = pd.DataFrame(log, columns=["s1", "s2", "a_j", "b_j", "d_j", "g_j", "a_a", "b_a", "d_a", "g_a", "optFitIndxs", "optFitness", "optFit", "errs", "errIndxs", "errFits", "orderErrs"])
 logData.to_csv("out/log.csv")
 
+# работает только с первым вариантом лога и только если он не слишком большой
 la.dropStratFitData(0)
 la.dropFitDataByAbsVals(0)
 la.dropStratFitData(1)
