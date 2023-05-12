@@ -2,7 +2,7 @@ import pandas as pd
 from ast import literal_eval
 
 
-def dropStratFitData(row):
+def writeStratFitData(row):
     """
     выводим в файл стратегии вместе с фитнесом из указанной строки лога
         работает только с первым вариантом лога и только если он не слишком большой
@@ -21,7 +21,7 @@ def dropStratFitData(row):
     stratFitData.to_csv("out/stratFitData_" + str(row) + ".csv")
 
 
-def dropFitDataByAbsVals(row):
+def writeFitDataByAbsVals(row):
     """
     выводим в файл фитнес по абсолютным значениям из указанной строки лога
         работает только с первым вариантом лога и только если он не слишком большой
@@ -48,11 +48,24 @@ def dropFitDataByAbsVals(row):
                 absValFit.append(0)
                 k+=1
 
-        order = (absValFit[0] < absValFit[3] and absValFit[1] < absValFit[3] and absValFit[2] < absValFit[3])
-        absValFit.append(order)
+        best = ""
+        if ((absValFit[0] != 0 and absValFit[1] != 0 and absValFit[2] != 0 and absValFit[3] != 0)):
+            if ((absValFit[0] < absValFit[3] and absValFit[1] < absValFit[3] and absValFit[2] < absValFit[3])):
+                best = "(-,-)"
+            else: 
+                if ((absValFit[0] < absValFit[2] and absValFit[1] < absValFit[2] and absValFit[3] < absValFit[2])):
+                    best = "(+,-)"
+                else:
+                    if ((absValFit[0] < absValFit[1] and absValFit[2] < absValFit[1] and absValFit[3] < absValFit[1])):
+                        best = "(-,+)"
+                    else:
+                        if ((absValFit[1] < absValFit[0] and absValFit[2] < absValFit[0] and absValFit[3] < absValFit[0])):
+                            best = "(+,+)"
+
+        absValFit.append(best)
         fitsByAbsVals.append(absValFit)
 
-    fitDataByAbsVals = pd.DataFrame(fitsByAbsVals, columns=["fit(+,+)", "fit(-,+)", "fit(+,-)", "fit(-,-)", "order"])
+    fitDataByAbsVals = pd.DataFrame(fitsByAbsVals, columns=["fit(+,+)", "fit(-,+)", "fit(+,-)", "fit(-,-)", "the best"])
     fitDataByAbsVals.to_csv("out/fitDataByAbsVals_" + str(row) + ".csv")
 
     

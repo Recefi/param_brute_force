@@ -10,7 +10,7 @@ B_jun = stratData['Bj'].tolist()
 B_adult = stratData['Ba'].tolist() 
 stratIndexes = stratData.index
 # Считываем заданные оптимальные A и B из файла
-optStratData = pd.read_csv("opt_strat_data.csv", index_col=0)
+optStratData = pd.read_csv("opt_strat_data1.csv", index_col=0)
 A_jun_opt = optStratData['Aj'].tolist()
 A_adult_opt = optStratData['Aa'].tolist()
 B_jun_opt = optStratData['Bj'].tolist()
@@ -82,6 +82,7 @@ def checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a):
     errIndxs = []
     errFits = []
     orderErrs = -1
+    backOrderErrs = -1
     if (len(optFitness)):
         # из всех заданных в файле оптимальных стратегий рассматриваем только "самую оптимальную" при данных параметрах
         optFit = np.max(optFitness)
@@ -108,25 +109,49 @@ def checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a):
                             if (Fitness[i-j] > Fitness[i]):
                                 orderErr = 1
                 orderErrs+=orderErr
+        backOrderErrs = 0
+        for i in range(len(Fitness)):
+            if (fitIndxs[i] % 4 == 0):
+                backOrderErr = 0
+                for j in range(1, 4):
+                    if (i+j > len(Fitness)):
+                        break
+                    for k in range(j, 4):
+                        if (fitIndxs[i+j] == fitIndxs[i] + k):
+                            if (Fitness[i+j] > Fitness[i]):
+                                backOrderErr = 1
+                backOrderErrs+=backOrderErr
     else:
         # если ни одна из заданных оптимальных стратегий при данных параметрах не вычисляется
         errs = -1
 
-    print(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, errs, orderErrs)
+    print(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, errs, " ", orderErrs, backOrderErrs)
     log.append([s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, optFitIndxs, optFitness, optFit, errs, errIndxs, errFits, fitIndxs, Fitness, orderErrs])  # первый вариант лога, рекомендуется для вручную заданных параметров
     # log.append([s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a, optFitIndxs, optFitness, optFit, errs, errIndxs, errFits, orderErrs])  # второй вариант лога, рекомендуется для генерируемых параметров
 
 # вручную заданный лог
 checkParam(1, 1, 0.0016, 0.0000007, 0.000016, 0.00008, 0.006, 0.000000075, 0.00006, 0.004)
-checkParam(1, 1, 0.0016, 0.0000007, 0.000016, -0.00008, 0.006, 0.000000075, 0.00006, -0.004)
+checkParam(1, 1, 0.0016, 0.0000007, 0.000016, -0.00008, 0.006, 0.000000075, 0.00006, -0.004)  # 1 # хорошие для (-,-)
+checkParam(1, 1, 0.006, 0.000000075, 0.00006, 0.004, 0.0016, 0.0000007, 0.000016, 0.00008)
+checkParam(1, 1, 0.006, 0.000000075, 0.00006, -0.004, 0.0016, 0.0000007, 0.000016, -0.00008)
+checkParam(1.4, 1, 0.0016, 0.0000007, 0.000016, 0.00008, 0.006, 0.000000075, 0.00006, 0.004)
+checkParam(1.4, 1, 0.0016, 0.0000007, 0.000016, -0.00008, 0.006, 0.000000075, 0.00006, -0.004)  # 5 # лучшие для (-,-)
+checkParam(1.4, 1, 0.006, 0.000000075, 0.00006, 0.004, 0.0016, 0.0000007, 0.000016, 0.00008)
+checkParam(1.4, 1, 0.006, 0.000000075, 0.00006, -0.004, 0.0016, 0.0000007, 0.000016, -0.00008)
+# checkParam(1, 1, 0.00224, 0.0000007, 0.000016, 0.00008, 0.0084, 0.000000075, 0.00006, 0.004)
+# checkParam(1, 1, 0.00224, 0.0000007, 0.000016, -0.00008, 0.0084, 0.000000075, 0.00006, -0.004)  # 9(то же самое, что 4) # лучшие для (-,-)
+# checkParam(1, 1, 0.0084, 0.000000075, 0.00006, 0.004, 0.00224, 0.0000007, 0.000016, 0.00008)
+# checkParam(1, 1, 0.0084, 0.000000075, 0.00006, -0.004, 0.00224, 0.0000007, 0.000016, -0.00008)
 checkParam(0.25, 0.003, 0.0016, 0.0000007, 0.000016, 0.00008, 0.006, 0.000000075, 0.00006, 0.004)
+checkParam(0.25, 0.003, 0.0016, 0.0000007, 0.000016, -0.00008, 0.006, 0.000000075, 0.00006, -0.004)
+checkParam(0.25, 0.003, 0.006, 0.000000075, 0.00006, 0.004, 0.0016, 0.0000007, 0.000016, 0.00008)
+checkParam(0.25, 0.003, 0.006, 0.000000075, 0.00006, -0.004, 0.0016, 0.0000007, 0.000016, -0.00008)
 checkParam(0.25, 0.003, 0.098, 0.0000006, 0.0003, 0.003, 0.616, 0.000035, 0.0003, 0.006)
 checkParam(0.25, 0.003, 0.098, 0.0000006, 0.0003, -0.003, 0.616, 0.000035, 0.0003, -0.006)
 checkParam(0.25, 0.003, 0.098, 0.0000006, 0.00003, 0.003, 0.012, 0.000035, 0.00003, 0.006)
 checkParam(0.25, 0.003, 0.0245, 0.0000006, 0.00003, 0.003, 0.012, 0.000035, 0.00003, 0.006)
 
 # # генерация лога случайных параметров
-# i = 0
 # for i in range(100000):
 #     s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a = genParam()
 #     checkParam(s1, s2, a_j, b_j, d_j, g_j, a_a, b_a, d_a, g_a)
@@ -135,8 +160,17 @@ logData = pd.DataFrame(log, columns=["s1", "s2", "a_j", "b_j", "d_j", "g_j", "a_
 #logData = pd.DataFrame(log, columns=["s1", "s2", "a_j", "b_j", "d_j", "g_j", "a_a", "b_a", "d_a", "g_a", "optFitIndxs", "optFitness", "optFit", "errs", "errIndxs", "errFits", "orderErrs"])
 logData.to_csv("out/log.csv")
 
+
+# анализ лога
 # работает только с первым вариантом лога и только если он не слишком большой
-la.dropStratFitData(0)
-la.dropFitDataByAbsVals(0)
-la.dropStratFitData(1)
-la.dropFitDataByAbsVals(1)
+la.writeStratFitData(0)
+la.writeFitDataByAbsVals(0)
+la.writeStratFitData(1)
+la.writeFitDataByAbsVals(1)
+
+la.writeStratFitData(4)
+la.writeFitDataByAbsVals(4)
+la.writeStratFitData(6)
+la.writeFitDataByAbsVals(6)
+la.writeStratFitData(5)
+la.writeFitDataByAbsVals(5)
